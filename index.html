@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Chatbot</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h2>Travel Chatbot</h2>
+    <div id="chat"></div>
+    <input type="text" id="userInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io("http://localhost:8000");
+
+        socket.on("connect", () => {
+            console.log("Connected to WebSocket server");
+        });
+
+        function sendMessage() {
+            const userMessage = document.getElementById("userInput").value;
+            document.getElementById("chat").innerHTML += `<p>User: ${userMessage}</p>`;
+
+            socket.emit("message", { message: userMessage, history: [] });
+
+            socket.on("response", (data) => {
+                document.getElementById("chat").innerHTML += `<p>Bot: ${data.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
